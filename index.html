@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>[TU TIEMPO ES ORO]</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap -->
+    <link href="dist/css/bootstrap.css" rel="stylesheet" media="screen">
+    <link href="dist/css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <link href="dist/css/counter.css" rel="stylesheet" media="screen">
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="../../assets/js/html5shiv.js"></script>
+      <script src="../../assets/js/respond.min.js"></script>
+    <![endif]-->
+    <script type="text/javascript" src="//use.typekit.net/gwr1smm.js"></script>
+    <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
+
+  </head>
+  <body>
+
+    
+  <header id="header">
+    <h1>Tu tiempo es ORO</h1>   
+    <p class="subtitle">Calcula cuánto dinero cuesta cada reunión.</p>
+  </header><!-- /header -->
+
+  <!-- CONTENT -->  
+
+  <div class="container" style="display: table;">
+
+
+  <div class="row">
+
+        <form class="form-inline" role="form">
+          <div class="content">
+            <!-- INPUTS -->
+            <div class="col-lg-12 pull-left">
+                <div class="form-group col-lg-5 box-input">
+                  <div  class="input-group">
+                    <input id="attendees" type="text" class="form-control" placeholder="Número de asistentes">
+                    <span class="input-group-addon">
+                      <span class="glyphicon glyphicon-user"></span>
+                    </span>            
+                  </div>       
+                </div>
+                <div class="form-group col-lg-5 col-md-offset-1 box-input">
+                  <div class="input-group">
+                    <input id="hourly" type="text" class="form-control" placeholder="Tarifa media por hora">
+                    <span class="input-group-addon">
+                      <span class="glyphicon glyphicon-euro"></span>
+                    </span>
+                  </div>      
+                </div>              
+            </div>
+
+            <!-- COUNTER -->
+            <div class="box-detener">
+              <div>
+                <div id="box_contador_dinero" style="display:none">
+                  <span>La reunión está costando</span>
+                  <div id="contador_dinero">0,00€</div>                  
+                </div>
+                <div id="box_contador_tiempo" style="display:none">
+                  <span>y dura</span>
+                  <div id="contador_tiempo">00:00:00</div>                   
+                </div>
+              </div>
+
+
+            <!-- BUTTON -->
+            <div class="box-inicio">
+              <p style="text-align: center;">
+                <a class="btn btn-lg btn-primary" href="#" onclick="iniciarReloj();" id="link_iniciar">Iniciar reloj</a>
+                <a class="btn btn-lg btn-primary" href="#" onclick="detenerReloj();" id="link_detener" style="display:none">Detener reloj</a>
+              </p> 
+            </div>
+
+            </div>
+          </div>
+      <div>
+  </div>            
+</form>
+
+
+
+
+
+
+  </div>
+
+
+
+    </div> <!-- /container -->
+
+
+    <footer class="time">
+      <div class="col-lg-12">
+        <ul>
+          <li>
+            Basado en código de <a href="http://tobytripp.github.io/meeting-ticker/" title="">tobytripp</a>
+          </li>
+          <li>
+            y <a href="http://stackoverflow.com/users/13913/patrick-desjardins" title="">Patrick Desjardins</a>
+          </li>
+        </ul>
+      </div>
+    </footer>
+
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="assets/js/jquery.js"></script>
+    <script src="assets/js/holder.js"></script>
+    <script src="dist/js/bootstrap.min.js"></script>
+  
+  <script>
+
+  var intervalo;
+  var contadorSegundos;
+  var contadorDinero;
+  var precioPorSegundo;
+  
+
+  function iniciarReloj() {
+    var personas = $("#attendees").val();    
+    var media = parseFloat($("#hourly").val().replace(',', '.'));
+
+    precioPorSegundo = personas * media  / 3600.0;
+    contadorSegundos = 0;
+    contadorDinero = 0;
+
+    intervalo = setInterval(pasaUnSegundo,1000);
+
+    document.getElementById('link_iniciar').style.display = 'none';
+    document.getElementById('link_detener').style.display = 'block';
+
+    document.getElementById('box_contador_dinero').style.display = 'block';
+    document.getElementById('box_contador_tiempo').style.display = 'block';
+
+  }
+
+  function pasaUnSegundo() {
+
+    contadorDinero = contadorDinero + precioPorSegundo;
+    contadorSegundos = contadorSegundos + 1;
+
+    document.getElementById("contador_dinero").innerHTML = contadorDinero.formatMoney(2,',','.') + "€";
+    document.getElementById("contador_tiempo").innerHTML = contadorSegundos.formatHours();
+
+  }
+
+  function detenerReloj() {
+
+    clearInterval(intervalo);
+
+    document.getElementById('link_iniciar').style.display = 'block';
+    document.getElementById('link_detener').style.display = 'none';
+
+  }
+
+  /* From http://stackoverflow.com/questions/149055/how-can-i-format-numbers-as-money-in-javascript/149099#149099 , 
+  by http://stackoverflow.com/users/13913/patrick-desjardins */
+  Number.prototype.formatMoney = function(c, d, t){
+  var n = this, 
+      c = isNaN(c = Math.abs(c)) ? 2 : c, 
+      d = d == undefined ? "." : d, 
+      t = t == undefined ? "," : t, 
+      s = n < 0 ? "-" : "", 
+      i = parseInt(n = Math.abs(+n || 0).toFixed(c)) + "", 
+      j = (j = i.length) > 3 ? j % 3 : 0;
+     return s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) + (c ? d + Math.abs(n - i).toFixed(c).slice(2) : "");
+  };
+
+  Number.prototype.formatHours = function () {
+    var s = this,
+        hh = Math.floor(s / 3600),
+        mm = Math.floor((s % 3600) / 60),
+        ss = s % 60;
+    if (hh<10) hh = "0" + hh;
+    if (mm<10) mm = "0" + mm;
+    if (ss<10) ss = "0" + ss;
+    return hh + ":" + mm + ":" +ss;
+  }
+
+  </script>    
+  </body>
+</html>
